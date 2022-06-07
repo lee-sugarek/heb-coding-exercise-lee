@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 @RequestMapping("/images")
@@ -30,7 +31,7 @@ public class ImagesController {
     }
 
     @GetMapping(value = "/{imageId}")
-    public ResponseEntity<byte[]> getImagesById(@PathVariable final String imageId) throws IOException {
+    public ResponseEntity<byte[]> getImagesById(@PathVariable final Integer imageId) throws IOException, SQLException {
         return imagesService.getImagesById(imageId);
     }
 

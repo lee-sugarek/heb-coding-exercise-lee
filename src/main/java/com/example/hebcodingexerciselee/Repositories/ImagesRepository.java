@@ -2,6 +2,8 @@ package com.example.hebcodingexerciselee.Repositories;
 
 import com.example.hebcodingexerciselee.Entities.ImageEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface ImageEntityRepository extends JpaRepository<ImageEntity, Integer> {
+@Repository
+public interface ImagesRepository extends JpaRepository<ImageEntity, Integer> {
 }
