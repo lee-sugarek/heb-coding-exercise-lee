@@ -1,29 +1,65 @@
 package com.example.hebcodingexerciselee.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StreamUtils;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
 public class ImagesService {
+    private final VisionService visionService;
 
     @Autowired
-    public ImagesService() {
-
+    public ImagesService(final VisionService visionService) {
+        this.visionService = visionService;
     }
 
-    public String getImages() {
-        return "All Images API call";
+    public ResponseEntity<byte[]> getImages() throws IOException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.CONTENT_DISPOSITION, String.format("inline; filename=%s", "Apple.jpeg"));
+
+        var imgFile = new ClassPathResource("stored_images/apple.jpg");
+        byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
+
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(bytes);
     }
 
-    public String getImagesByObjects(List<String> objects) {
+    public ResponseEntity<byte[]> getImagesByObjects(List<String> objects) throws IOException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.CONTENT_DISPOSITION, String.format("inline; filename=%s", "Apple.jpeg"));
 
-        return ("Images by objects " + objects.toString());
+        var imgFile = new ClassPathResource("stored_images/apple.jpg");
+        byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
+
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(bytes);
     }
 
-    public String getImagesById(String imageId) {
-        return ("Images By Id API call " + imageId);
+    public ResponseEntity<byte[]> getImagesById(String imageId) throws IOException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.CONTENT_DISPOSITION, String.format("inline; filename=%s", "Apple.jpeg"));
+
+        var imgFile = new ClassPathResource("stored_images/apple.jpg");
+        byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
+
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(bytes);
     }
 
     public String postImages() {

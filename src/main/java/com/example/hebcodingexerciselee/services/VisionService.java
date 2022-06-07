@@ -1,16 +1,22 @@
-package com.example.hebcodingexerciselee.controllers;
+package com.example.hebcodingexerciselee.services;
 
 import com.google.cloud.vision.v1.*;
 import com.google.cloud.vision.v1.Feature.Type;
 import com.google.protobuf.ByteString;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class VisionController {
-    public static void main(String... args) throws Exception {
+@Service
+public class VisionService {
+
+    @Autowired
+    public VisionService() {}
+    public void detectObjects(String... args) throws Exception {
         // Initialize client that will be used to send requests. This client only needs to be created
         // once, and can be reused for multiple requests. After completing all of your requests, call
         // the "close" method on the client to safely clean up any remaining background resources.
@@ -42,8 +48,8 @@ public class VisionController {
                 // Display the results
                 for (AnnotateImageResponse res : responses) {
                     for (LocalizedObjectAnnotation entity : res.getLocalizedObjectAnnotationsList()) {
-                        System.out.format("Object name: %s%n", entity.getName());
-                        System.out.format("Confidence: %s%n", entity.getScore());
+                        System.out.printf("Object name: %s%n%n", entity.getName());
+                        System.out.printf("Confidence: %s%n%n", entity.getScore());
                     }
                 }
             }
