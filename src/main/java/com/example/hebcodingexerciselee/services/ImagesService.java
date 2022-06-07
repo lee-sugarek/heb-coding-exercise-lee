@@ -14,13 +14,19 @@ import java.util.List;
 @Service
 public class ImagesService {
     private final VisionService visionService;
+    private final DatabaseService databaseService;
 
     @Autowired
-    public ImagesService(final VisionService visionService) {
+    public ImagesService(final VisionService visionService,
+                         final DatabaseService databaseService) {
         this.visionService = visionService;
+        this.databaseService = databaseService;
     }
 
     public ResponseEntity<byte[]> getImages() throws IOException {
+
+        databaseService.insertImagesToPostgres();
+
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_DISPOSITION, String.format("inline; filename=%s", "Apple.jpeg"));
 
