@@ -25,7 +25,7 @@ public class ImagesService {
 
     public ResponseEntity<byte[]> getImages() throws IOException {
 
-        databaseService.insertImagesToPostgres();
+        //databaseService.insertImagesToPostgres();
 
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_DISPOSITION, String.format("inline; filename=%s", "Apple.jpeg"));
@@ -44,7 +44,7 @@ public class ImagesService {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_DISPOSITION, String.format("inline; filename=%s", "Apple.jpeg"));
 
-        var imgFile = new ClassPathResource("stored_images/apple.jpg");
+        var imgFile = new ClassPathResource("stored_images/banana.jpg");
         byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
 
         return ResponseEntity
@@ -58,7 +58,7 @@ public class ImagesService {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_DISPOSITION, String.format("inline; filename=%s", "Apple.jpeg"));
 
-        var imgFile = new ClassPathResource("stored_images/apple.jpg");
+        var imgFile = new ClassPathResource("stored_images/cranberries.jpg");
         byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
 
         return ResponseEntity
