@@ -4,9 +4,7 @@ import com.google.cloud.vision.v1.*;
 import com.google.cloud.vision.v1.Feature.Type;
 import com.google.protobuf.ByteString;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StreamUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,14 +14,13 @@ public class VisionService {
 
     @Autowired
     public VisionService() {}
-    public void detectObjects(String... args) throws Exception {
+    public List<String> detectObjects(byte[] data) throws Exception {
+        List<String> detectedObjects = new ArrayList<>();
         // Initialize client that will be used to send requests. This client only needs to be created
         // once, and can be reused for multiple requests. After completing all of your requests, call
         // the "close" method on the client to safely clean up any remaining background resources.
         try (ImageAnnotatorClient vision = ImageAnnotatorClient.create()) {
 
-            var imgFile = new ClassPathResource("stored_images/bicycle.jpg");
-            byte[] data = StreamUtils.copyToByteArray(imgFile.getInputStream());
             ByteString imgBytes = ByteString.copyFrom(data);
 
             // Builds the image annotation request
@@ -48,11 +45,12 @@ public class VisionService {
                 // Display the results
                 for (AnnotateImageResponse res : responses) {
                     for (LocalizedObjectAnnotation entity : res.getLocalizedObjectAnnotationsList()) {
-                        System.out.printf("Object name: %s%n%n", entity.getName());
-                        System.out.printf("Confidence: %s%n%n", entity.getScore());
+                        detectedObjects.add(entity.getName());
                     }
                 }
             }
         }
+
+        return detectedObjects;
     }
 }

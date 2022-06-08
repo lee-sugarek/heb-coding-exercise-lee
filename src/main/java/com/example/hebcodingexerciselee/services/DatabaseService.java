@@ -1,48 +1,50 @@
 package com.example.hebcodingexerciselee.services;
 
+import com.example.hebcodingexerciselee.dtos.ImageDto;
+import com.example.hebcodingexerciselee.entities.ImageEntity;
+import com.example.hebcodingexerciselee.repositories.ImagesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class DatabaseService {
+    private final ImagesRepository imagesRepository;
     @Autowired
-    DatabaseService(){}
+    DatabaseService(final ImagesRepository imagesRepository){
+        this.imagesRepository = imagesRepository;
+    }
 
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-    public void insertImagesToPostgres() throws IOException {
-        var imgFile = new ClassPathResource("stored_images/bicycle.jpg");
-        byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
-        List<String> objects = new ArrayList<>();
-        objects.add("bicycle");
-        objects.add("wheel");
-        objects.add("tire");
+    public Integer insertImageToPostgres(ImageDto dto) throws IOException {
+        Integer id = this.imagesRepository.findMaxId();
+        Integer finalId = id + 1;
 
         Array sqlArray = jdbcTemplate.execute(
-                (Connection c) -> c.createArrayOf(JDBCType.VARCHAR.getName(), objects.toArray()));
+                (Connection c) -> c.createArrayOf(JDBCType.VARCHAR.getName(), dto.getObjects().toArray()));
 
-
-        PreparedStatementSetter ps = new PreparedStatementSetter() {
-            @Override
-            public void setValues(PreparedStatement ps) throws SQLException {
-                ps.setInt(1, 4);
-                ps.setString(2, "bicycle.jpg");
-                ps.setString(3, "image/jpg");
-                ps.setBytes(4, bytes);
-                ps.setArray(5, sqlArray);
-            }
+        PreparedStatementSetter ps = ps1 -> {
+            ps1.setInt(1, finalId);
+            ps1.setString(2, dto.getFilename());
+            ps1.setString(3, dto.getType());
+            ps1.setBytes(4, dto.getSource());
+            ps1.setArray(5, sqlArray);
         };
 
         jdbcTemplate.update("INSERT INTO public.\"Images\"(id, filename, type, source, objects) VALUES (?, ?, ?, ?, ?)", ps);
+
+        return finalId;
+    }
+
+    public ImageEntity findById(Integer imageId) {
+        ImageEntity entityPlaceholder = new ImageEntity();
+
+        return imagesRepository.findById(imageId).orElse(entityPlaceholder);
     }
 }

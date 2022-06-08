@@ -1,7 +1,7 @@
 package com.example.hebcodingexerciselee.services;
 
-import com.example.hebcodingexerciselee.Entities.ImageEntity;
-import com.example.hebcodingexerciselee.Repositories.ImagesRepository;
+import com.example.hebcodingexerciselee.dtos.ImageDto;
+import com.example.hebcodingexerciselee.entities.ImageEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
@@ -9,26 +9,22 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ImagesService {
     private final VisionService visionService;
     private final DatabaseService databaseService;
-    private final ImagesRepository imagesRepository;
 
     @Autowired
     public ImagesService(final VisionService visionService,
-                         final DatabaseService databaseService,
-                         final ImagesRepository imagesRepository) {
+                         final DatabaseService databaseService) {
         this.visionService = visionService;
         this.databaseService = databaseService;
-        this.imagesRepository = imagesRepository;
     }
 
     public ResponseEntity<byte[]> getImages() throws IOException {
@@ -60,26 +56,32 @@ public class ImagesService {
                 .body(bytes);
     }
 
-    public ResponseEntity<byte[]> getImagesById(Integer imageId) throws IOException, SQLException {
-        ImageEntity entityPlaceholder = new ImageEntity();
-        ImageEntity entity = imagesRepository.findById(imageId).orElse(entityPlaceholder);
-        HttpHeaders headers = new HttpHeaders();
-        headers.set(HttpHeaders.CONTENT_DISPOSITION, String.format("inline; filename=%s", entity.getFilename()));
+    public ImageDto getImagesById(Integer imageId) throws IOException {
+        ImageEntity entity = databaseService.findById(imageId);
 
-        return ResponseEntity
-                .ok()
-                .headers(headers)
-                .contentType(MediaType.IMAGE_JPEG)
-                .body(entity.getSource());
+        return convertImageEntityToDto(entity);
     }
 
-    public String postImages() throws SQLException, IOException {
-        insertImages();
-        return "Post Images API call";
+    public Integer postImages(MultipartFile multipartFile) throws Exception {
+        ImageDto imageDto = new ImageDto();
+        imageDto.setFilename(multipartFile.getName());
+        imageDto.setSource(multipartFile.getBytes());
+        imageDto.setType("/image/jpg");
+        imageDto.setObjects(visionService.detectObjects(multipartFile.getBytes()));
+
+        return databaseService.insertImageToPostgres(imageDto);
     }
 
-    public void insertImages() throws SQLException, IOException {
 
-        databaseService.insertImagesToPostgres();
+    private ImageDto convertImageEntityToDto(ImageEntity entity) throws IOException {
+        ImageDto dto = new ImageDto();
+        dto.setId(entity.getId());
+        dto.setFilename(entity.getFilename());
+        dto.setType(entity.getType());
+        var imgFile = new ClassPathResource("stored_images/bicycle.jpg");
+        byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
+        dto.setSource(bytes);
+
+        return dto;
     }
 }

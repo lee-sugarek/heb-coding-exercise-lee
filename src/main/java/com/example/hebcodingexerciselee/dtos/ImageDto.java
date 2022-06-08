@@ -1,24 +1,13 @@
-package com.example.hebcodingexerciselee.Entities;
+package com.example.hebcodingexerciselee.dtos;
 
-import javax.persistence.*;
+import java.util.List;
 
-@Entity
-@Table(name = "\"Images\"")
-public class ImageEntity {
-    @Id
-    @Column(name = "id", nullable = false)
+public class ImageDto {
     private Integer id;
-
-    @Lob
-    @Column(name = "filename")
     private String filename;
-
-    @Lob
-    @Column(name = "type")
     private String type;
-
-    @Column(name = "source")
     private byte[] source;
+    private List<String> objects;
 
     public Integer getId() {
         return id;
@@ -52,10 +41,12 @@ public class ImageEntity {
         this.source = source;
     }
 
-/*
-  TODO [JPA Buddy] create field to map the 'objects' column
-   Available actions: Define target Java type | Uncomment as is | Remove column mapping
-  @Column(name = "objects", columnDefinition = "varchar[]")
-  private Object objects;
-*/
+    public List<String> getObjects() {
+        return objects;
+    }
+
+    public void setObjects(List<String> objects) {
+        this.objects = objects;
+    }
+
 }
