@@ -64,9 +64,9 @@ public class ImagesService {
 
     public Integer postImages(MultipartFile multipartFile) throws Exception {
         ImageDto imageDto = new ImageDto();
-        imageDto.setFilename(multipartFile.getName());
+        imageDto.setFilename(multipartFile.getOriginalFilename());
         imageDto.setSource(multipartFile.getBytes());
-        imageDto.setType("/image/jpg");
+        imageDto.setType(multipartFile.getContentType());
         imageDto.setObjects(visionService.detectObjects(multipartFile.getBytes()));
 
         return databaseService.insertImageToPostgres(imageDto);
