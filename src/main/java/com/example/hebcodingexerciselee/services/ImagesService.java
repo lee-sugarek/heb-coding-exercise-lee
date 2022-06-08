@@ -58,7 +58,9 @@ public class ImagesService {
 
     public ImageDto getImagesById(Integer imageId) throws IOException {
         ImageEntity entity = databaseService.findById(imageId);
-
+        entity.setId(imageId);
+        entity.setFilename("bicycle.jpg");
+        entity.setType("image/jpeg");
         return convertImageEntityToDto(entity);
     }
 
