@@ -45,7 +45,9 @@ public class VisionService {
                 // Display the results
                 for (AnnotateImageResponse res : responses) {
                     for (LocalizedObjectAnnotation entity : res.getLocalizedObjectAnnotationsList()) {
-                        detectedObjects.add(entity.getName());
+                        if (!detectedObjects.contains(entity.getName())) {
+                            detectedObjects.add(entity.getName());
+                        }
                     }
                 }
             }
