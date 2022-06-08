@@ -73,7 +73,8 @@ public class ImagesService {
                 .body(entity.getSource());
     }
 
-    public String postImages() {
+    public String postImages() throws SQLException, IOException {
+        insertImages();
         return "Post Images API call";
     }
 
