@@ -36,7 +36,7 @@ public class ImagesController {
     }
 
     @PostMapping
-    public Integer postImages(@RequestParam (value= "file" ) MultipartFile multipartFile) throws Exception {
+    public ImageDto postImages(@RequestParam (value= "file" ) MultipartFile multipartFile) throws Exception {
         return imagesService.postImages(multipartFile);
     }
 }

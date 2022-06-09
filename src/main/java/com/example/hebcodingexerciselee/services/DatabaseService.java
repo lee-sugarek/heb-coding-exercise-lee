@@ -56,18 +56,18 @@ public class DatabaseService {
         return imagesRepository.getById(imageId);
     }
 
-    public Integer insertImage(ImageDto dto) {
+    public ImageDto insertImage(ImageDto dto) {
 
         Integer id = this.imagesRepository.findMaxId();
         // If no records have been inserted into DB, then we set id to 1. Otherwise, the unique id is set to the max id plus one.
-        int finalId = id == null ? 1 : id + 1;
+        dto.setId(id == null ? 1 : id + 1);
 
         //Converts String List to java.sql.Array that can be inserted into Postgres Varying Character Array column type.
         Array sqlArray = jdbcTemplate.execute(
                 (Connection c) -> c.createArrayOf(JDBCType.VARCHAR.getName(), dto.getObjects().toArray()));
 
         PreparedStatementSetter ps = ps1 -> {
-            ps1.setInt(1, finalId);
+            ps1.setInt(1, dto.getId());
             ps1.setString(2, dto.getFilename());
             ps1.setString(3, dto.getType());
             ps1.setBytes(4, dto.getSource());
@@ -76,7 +76,7 @@ public class DatabaseService {
 
         jdbcTemplate.update("INSERT INTO public.\"images\"(id, filename, type, source, objects) VALUES (?, ?, ?, ?, ?)", ps);
 
-        return finalId;
+        return dto;
     }
 
     /* Inner class that maps a resultSet to ImageDto */

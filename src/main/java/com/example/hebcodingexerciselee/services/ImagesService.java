@@ -48,7 +48,7 @@ public class ImagesService {
         return convertImageEntityToDto(imageEntity);
     }
 
-    public Integer postImages(MultipartFile multipartFile) throws Exception {
+    public ImageDto postImages(MultipartFile multipartFile) throws Exception {
         ImageDto imageDto = new ImageDto();
         imageDto.setFilename(multipartFile.getOriginalFilename());
         imageDto.setSource(multipartFile.getBytes());
