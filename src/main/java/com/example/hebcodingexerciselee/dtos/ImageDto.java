@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
+/* Data transfer object that contains image metadata and is transferred to the client */
 public class ImageDto {
     private Integer id;
     private String filename;

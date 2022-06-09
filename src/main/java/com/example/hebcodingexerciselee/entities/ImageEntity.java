@@ -4,6 +4,7 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
+/* Database entity that maps to a Postgres Database Table named Images. Custom type used for handling varying character array. */
 @Entity
 @Table(name = "\"images\"")
 public class ImageEntity {

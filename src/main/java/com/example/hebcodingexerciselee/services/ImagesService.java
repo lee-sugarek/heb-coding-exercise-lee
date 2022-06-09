@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/*
+Service class that handles all the data processing.
+ */
 @Service
 public class ImagesService {
     private final VisionService visionService;
@@ -23,14 +26,15 @@ public class ImagesService {
     }
 
     public List<ImageDto> getImages() {
-        List<ImageEntity> entities = databaseService.getImages();
-        List<ImageDto> dtos = new ArrayList<>();
-        entities.forEach(imageEntity -> dtos.add(convertImageEntityToDto(imageEntity)));
+        List<ImageEntity> imageEntities = databaseService.getImages();
+        List<ImageDto> imageDtos = new ArrayList<>();
+        imageEntities.forEach(imageEntity -> imageDtos.add(convertImageEntityToDto(imageEntity)));
 
-        return dtos;
+        return imageDtos;
     }
 
     public List<ImageDto> getImagesByObjects(String objects) {
+        //Trim off beginning and ending Quotation Marks and then splits into list ("Foo,Bar" -> Foo,Bar -> {Foo, Bar})
         if (objects.length() > 2) {
             objects = objects.substring(1, objects.length() - 1);
         }
@@ -39,8 +43,9 @@ public class ImagesService {
     }
 
     public ImageDto getImagesById(Integer imageId) {
-        ImageEntity entity = databaseService.getById(imageId);
-        return convertImageEntityToDto(entity);
+        ImageEntity imageEntity = databaseService.getById(imageId);
+
+        return convertImageEntityToDto(imageEntity);
     }
 
     public Integer postImages(MultipartFile multipartFile) throws Exception {
@@ -54,15 +59,15 @@ public class ImagesService {
     }
 
     private ImageDto convertImageEntityToDto(ImageEntity entity) {
-        ImageDto dto = new ImageDto();
-        dto.setId(entity.getId());
-        dto.setFilename(entity.getFilename());
-        dto.setType(entity.getType());
-        dto.setSource(entity.getSource());
+        ImageDto imageDto = new ImageDto();
+        imageDto.setId(entity.getId());
+        imageDto.setFilename(entity.getFilename());
+        imageDto.setType(entity.getType());
+        imageDto.setSource(entity.getSource());
         if (entity.getObjects() != null) {
-            dto.setObjects(Arrays.stream(entity.getObjects()).toList());
+            imageDto.setObjects(Arrays.stream(entity.getObjects()).toList());
         }
 
-        return dto;
+        return imageDto;
     }
 }

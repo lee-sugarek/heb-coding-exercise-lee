@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Arrays;
 import java.util.List;
 
+/* Controller class that maps to all /images requests and calls the appropriate service method. */
 @RequestMapping("/images")
 @RestController
 public class ImagesController {

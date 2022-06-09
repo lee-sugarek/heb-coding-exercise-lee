@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+Service class used to retrieve the objects detected by Google Cloud Vision API
+ */
 @Service
 public class VisionService {
 

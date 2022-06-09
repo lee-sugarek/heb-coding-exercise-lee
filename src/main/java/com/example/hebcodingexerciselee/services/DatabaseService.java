@@ -12,6 +12,10 @@ import org.springframework.stereotype.Service;
 import java.sql.*;
 import java.util.List;
 
+/*
+The database service builds and executes all the sql queries.
+JPA repository used for executing the simple queries and then jdbcTemplate for the more complex custom queries.
+ */
 @Service
 public class DatabaseService {
     private final ImagesRepository imagesRepository;
@@ -25,8 +29,13 @@ public class DatabaseService {
 
     public List<ImageEntity> getImages() { return imagesRepository.findAll(); }
 
-    public List<ImageDto> getImagesByObjects(List<String> objects) {
+    /* This method builds a SQL query and returns all images if no objects are passed in.
+       If there is one object present, then we append the WHERE clause.
+       For every other object, we append an OR clause.
 
+       We then loop through and append each of these objects into the prepared statement.
+     */
+    public List<ImageDto> getImagesByObjects(List<String> objects) {
         StringBuilder sql = new StringBuilder("SELECT * FROM public.\"images\" ");
         if (objects.size() > 0) {
             sql.append("WHERE ? = ANY(objects) ");
@@ -48,10 +57,12 @@ public class DatabaseService {
     }
 
     public Integer insertImage(ImageDto dto) {
-        Integer id = this.imagesRepository.findMaxId();
 
+        Integer id = this.imagesRepository.findMaxId();
+        // If no records have been inserted into DB, then we set id to 1. Otherwise, the unique id is set to the max id plus one.
         int finalId = id == null ? 1 : id + 1;
 
+        //Converts String List to java.sql.Array that can be inserted into Postgres Varying Character Array column type.
         Array sqlArray = jdbcTemplate.execute(
                 (Connection c) -> c.createArrayOf(JDBCType.VARCHAR.getName(), dto.getObjects().toArray()));
 
@@ -68,6 +79,7 @@ public class DatabaseService {
         return finalId;
     }
 
+    /* Inner class that maps a resultSet to ImageDto */
     public static class ImageMapper implements RowMapper<ImageDto> {
         @Override
         public ImageDto mapRow(ResultSet rs, int rowNum) throws SQLException {

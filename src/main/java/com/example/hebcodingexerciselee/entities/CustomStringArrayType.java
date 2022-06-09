@@ -7,6 +7,7 @@ import org.hibernate.usertype.UserType;
 import java.io.Serializable;
 import java.sql.*;
 
+/* Custom type created that maps to the varying character array column type in Postgres */
 public class CustomStringArrayType implements UserType {
     @Override
     public int[] sqlTypes() {
