@@ -1,5 +1,8 @@
 package com.example.hebcodingexerciselee.dtos;
 
+import java.sql.Array;
+import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 
 public class ImageDto {
@@ -46,4 +49,14 @@ public class ImageDto {
     }
 
     public void setObjects(List<String> objects) { this.objects = objects; }
+
+    public ImageDto(){}
+
+    public ImageDto(Integer id, String filename, String type, byte[] source, Array objects) throws SQLException {
+        this.id = id;
+        this.filename = filename;
+        this.type = type;
+        this.source = source;
+        this.objects = Arrays.stream((String[])objects.getArray()).toList();
+    }
 }

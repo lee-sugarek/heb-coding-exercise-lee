@@ -6,8 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 
 @RequestMapping("/images")
@@ -27,7 +26,7 @@ public class ImagesController {
     }
 
     @GetMapping(params = "objects")
-    public List<ImageDto> getImagesByObject(@RequestParam(required = false) List<String> objects) {
+    public List<ImageDto> getImagesByObjects(@RequestParam(required = false) String objects) {
         return imagesService.getImagesByObjects(objects);
     }
 

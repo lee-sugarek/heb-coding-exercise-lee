@@ -30,12 +30,12 @@ public class ImagesService {
         return dtos;
     }
 
-    public List<ImageDto> getImagesByObjects(List<String> objects) {
-        List<ImageEntity> entities = databaseService.getImagesByObjects(objects);
-        List<ImageDto> dtos = new ArrayList<>();
-        entities.forEach(imageEntity -> dtos.add(convertImageEntityToDto(imageEntity)));
+    public List<ImageDto> getImagesByObjects(String objects) {
+        if (objects.length() > 2) {
+            objects = objects.substring(1, objects.length() - 1);
+        }
 
-        return dtos;
+        return databaseService.getImagesByObjects(Arrays.stream(objects.split(",")).toList());
     }
 
     public ImageDto getImagesById(Integer imageId) {
@@ -59,7 +59,9 @@ public class ImagesService {
         dto.setFilename(entity.getFilename());
         dto.setType(entity.getType());
         dto.setSource(entity.getSource());
-        dto.setObjects(Arrays.stream(entity.getObjects()).toList());
+        if (entity.getObjects() != null) {
+            dto.setObjects(Arrays.stream(entity.getObjects()).toList());
+        }
 
         return dto;
     }
