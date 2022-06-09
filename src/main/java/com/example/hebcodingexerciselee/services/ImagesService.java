@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -58,9 +59,6 @@ public class ImagesService {
 
     public ImageDto getImagesById(Integer imageId) throws IOException {
         ImageEntity entity = databaseService.findById(imageId);
-        entity.setId(imageId);
-        entity.setFilename("bicycle.jpg");
-        entity.setType("image/jpeg");
         return convertImageEntityToDto(entity);
     }
 
@@ -80,9 +78,8 @@ public class ImagesService {
         dto.setId(entity.getId());
         dto.setFilename(entity.getFilename());
         dto.setType(entity.getType());
-        var imgFile = new ClassPathResource("stored_images/bicycle.jpg");
-        byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
-        dto.setSource(bytes);
+        dto.setSource(entity.getSource());
+        dto.setObjects(Arrays.stream(entity.getObjects()).toList());
 
         return dto;
     }

@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ImagesRepository extends JpaRepository<ImageEntity, Integer> {
-    @Query(value = "SELECT MAX(id) FROM public.\"Images\" ", nativeQuery = true)
+    @Query(value = "SELECT MAX(id) FROM public.\"images\" ", nativeQuery = true)
     Integer findMaxId();
 }

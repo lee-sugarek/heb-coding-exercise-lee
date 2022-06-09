@@ -37,14 +37,12 @@ public class DatabaseService {
             ps1.setArray(5, sqlArray);
         };
 
-        jdbcTemplate.update("INSERT INTO public.\"Images\"(id, filename, type, source, objects) VALUES (?, ?, ?, ?, ?)", ps);
+        jdbcTemplate.update("INSERT INTO public.\"images\"(id, filename, type, source, objects) VALUES (?, ?, ?, ?, ?)", ps);
 
         return finalId;
     }
 
     public ImageEntity findById(Integer imageId) {
-        ImageEntity entityPlaceholder = new ImageEntity();
-
-        return imagesRepository.findById(imageId).orElse(entityPlaceholder);
+        return imagesRepository.getById(imageId);
     }
 }
