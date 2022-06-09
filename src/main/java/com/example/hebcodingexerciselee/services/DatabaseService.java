@@ -8,8 +8,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class DatabaseService {
@@ -22,9 +23,22 @@ public class DatabaseService {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-    public Integer insertImageToPostgres(ImageDto dto) throws IOException {
+    public List<ImageEntity> getImages() { return imagesRepository.findAll(); }
+
+    public List<ImageEntity> getImagesByObjects(List<String> objects) {
+        List<ImageEntity> entities = new ArrayList<>();
+
+        return entities;
+    }
+
+    public ImageEntity getById(Integer imageId) {
+        return imagesRepository.getById(imageId);
+    }
+
+    public Integer insertImage(ImageDto dto) {
         Integer id = this.imagesRepository.findMaxId();
-        Integer finalId = id + 1;
+
+        int finalId = id == null ? 1 : id + 1;
 
         Array sqlArray = jdbcTemplate.execute(
                 (Connection c) -> c.createArrayOf(JDBCType.VARCHAR.getName(), dto.getObjects().toArray()));
@@ -40,9 +54,5 @@ public class DatabaseService {
         jdbcTemplate.update("INSERT INTO public.\"images\"(id, filename, type, source, objects) VALUES (?, ?, ?, ?, ?)", ps);
 
         return finalId;
-    }
-
-    public ImageEntity findById(Integer imageId) {
-        return imagesRepository.getById(imageId);
     }
 }

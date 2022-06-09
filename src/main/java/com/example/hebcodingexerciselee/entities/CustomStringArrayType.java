@@ -70,5 +70,4 @@ public class CustomStringArrayType implements UserType {
     public Object replace(Object o, Object o1, Object o2) throws HibernateException {
         return null;
     }
-    //implement equals, hashCode, and other methods
 }

@@ -45,8 +45,5 @@ public class ImageDto {
         return objects;
     }
 
-    public void setObjects(List<String> objects) {
-        this.objects = objects;
-    }
-
+    public void setObjects(List<String> objects) { this.objects = objects; }
 }

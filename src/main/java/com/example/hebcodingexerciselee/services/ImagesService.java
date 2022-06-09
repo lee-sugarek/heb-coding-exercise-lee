@@ -3,16 +3,10 @@ package com.example.hebcodingexerciselee.services;
 import com.example.hebcodingexerciselee.dtos.ImageDto;
 import com.example.hebcodingexerciselee.entities.ImageEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,37 +22,24 @@ public class ImagesService {
         this.databaseService = databaseService;
     }
 
-    public ResponseEntity<byte[]> getImages() throws IOException {
+    public List<ImageDto> getImages() {
+        List<ImageEntity> entities = databaseService.getImages();
+        List<ImageDto> dtos = new ArrayList<>();
+        entities.forEach(imageEntity -> dtos.add(convertImageEntityToDto(imageEntity)));
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set(HttpHeaders.CONTENT_DISPOSITION, String.format("inline; filename=%s", "apple.jpeg"));
-
-        var imgFile = new ClassPathResource("stored_images/apple.jpg");
-        byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
-
-        return ResponseEntity
-                .ok()
-                .headers(headers)
-                .contentType(MediaType.IMAGE_JPEG)
-                .body(bytes);
+        return dtos;
     }
 
-    public ResponseEntity<byte[]> getImagesByObjects(List<String> objects) throws IOException, SQLException {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set(HttpHeaders.CONTENT_DISPOSITION, String.format("inline; filename=%s", "banana.jpeg"));
+    public List<ImageDto> getImagesByObjects(List<String> objects) {
+        List<ImageEntity> entities = databaseService.getImagesByObjects(objects);
+        List<ImageDto> dtos = new ArrayList<>();
+        entities.forEach(imageEntity -> dtos.add(convertImageEntityToDto(imageEntity)));
 
-        var imgFile = new ClassPathResource("stored_images/banana.jpg");
-        byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
-
-        return ResponseEntity
-                .ok()
-                .headers(headers)
-                .contentType(MediaType.IMAGE_JPEG)
-                .body(bytes);
+        return dtos;
     }
 
-    public ImageDto getImagesById(Integer imageId) throws IOException {
-        ImageEntity entity = databaseService.findById(imageId);
+    public ImageDto getImagesById(Integer imageId) {
+        ImageEntity entity = databaseService.getById(imageId);
         return convertImageEntityToDto(entity);
     }
 
@@ -69,11 +50,10 @@ public class ImagesService {
         imageDto.setType(multipartFile.getContentType());
         imageDto.setObjects(visionService.detectObjects(multipartFile.getBytes()));
 
-        return databaseService.insertImageToPostgres(imageDto);
+        return databaseService.insertImage(imageDto);
     }
 
-
-    private ImageDto convertImageEntityToDto(ImageEntity entity) throws IOException {
+    private ImageDto convertImageEntityToDto(ImageEntity entity) {
         ImageDto dto = new ImageDto();
         dto.setId(entity.getId());
         dto.setFilename(entity.getFilename());
