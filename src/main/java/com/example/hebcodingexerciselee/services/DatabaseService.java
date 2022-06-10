@@ -62,16 +62,26 @@ public class DatabaseService {
         // If no records have been inserted into DB, then we set id to 1. Otherwise, the unique id is set to the max id plus one.
         dto.setId(id == null ? 1 : id + 1);
 
-        //Converts String List to java.sql.Array that can be inserted into Postgres Varying Character Array column type.
-        Array sqlArray = jdbcTemplate.execute(
-                (Connection c) -> c.createArrayOf(JDBCType.VARCHAR.getName(), dto.getObjects().toArray()));
+        // Generate file name if none present
+        if(dto.getFilename() == null) {
+            String fileTypeEnding = dto.getType().substring(6);
+            dto.setFilename(String.format("image%d.%s", dto.getId(), fileTypeEnding));
+        }
 
+        Array sqlArray = null;
+        //Converts String List to java.sql.Array that can be inserted into Postgres Varying Character Array column type.
+        if(dto.getObjects() != null) {
+            sqlArray = jdbcTemplate.execute(
+                    (Connection c) -> c.createArrayOf(JDBCType.VARCHAR.getName(), dto.getObjects().toArray()));
+        }
+
+        Array finalSqlArray = sqlArray;
         PreparedStatementSetter ps = ps1 -> {
             ps1.setInt(1, dto.getId());
             ps1.setString(2, dto.getFilename());
             ps1.setString(3, dto.getType());
             ps1.setBytes(4, dto.getSource());
-            ps1.setArray(5, sqlArray);
+            ps1.setArray(5, finalSqlArray);
         };
 
         jdbcTemplate.update("INSERT INTO public.\"images\"(id, filename, type, source, objects) VALUES (?, ?, ?, ?, ?)", ps);

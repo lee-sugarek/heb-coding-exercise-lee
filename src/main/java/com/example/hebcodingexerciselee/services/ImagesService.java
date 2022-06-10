@@ -48,12 +48,14 @@ public class ImagesService {
         return convertImageEntityToDto(imageEntity);
     }
 
-    public ImageDto postImages(MultipartFile multipartFile) throws Exception {
+    public ImageDto postImages(MultipartFile multipartFile, Boolean objectDetection) throws Exception {
         ImageDto imageDto = new ImageDto();
         imageDto.setFilename(multipartFile.getOriginalFilename());
         imageDto.setSource(multipartFile.getBytes());
         imageDto.setType(multipartFile.getContentType());
-        imageDto.setObjects(visionService.detectObjects(multipartFile.getBytes()));
+        if (objectDetection == null || objectDetection) {
+            imageDto.setObjects(visionService.detectObjects(multipartFile.getBytes()));
+        }
 
         return databaseService.insertImage(imageDto);
     }
